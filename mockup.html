@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi Pencatatan Kopi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .device-frame {
+            max-width: 400px;
+            margin: 0 auto;
+            background: #000;
+            border-radius: 25px;
+            padding: 8px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .screen {
+            background: #fff;
+            border-radius: 18px;
+            overflow: hidden;
+            height: 700px;
+            position: relative;
+        }
+
+        .status-bar {
+            background: #000;
+            color: #fff;
+            padding: 8px 20px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .app-header {
+            background: linear-gradient(135deg, #6B4423 0%, #8B4513 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .back-button {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .app-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .app-subtitle {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 20px;
+            height: calc(700px - 110px);
+            overflow-y: auto;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border: 1px solid #e9ecef;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .dashboard-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 12px;
+            padding: 25px 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid #dee2e6;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(139, 69, 19, 0.2);
+            border-color: #8B4513;
+        }
+
+        .dashboard-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .dashboard-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #8B4513;
+            margin-bottom: 5px;
+        }
+
+        .dashboard-desc {
+            font-size: 11px;
+            color: #6c757d;
+        }
+
+        .weighing-options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .option-card {
+            background: linear-gradient(135deg, #e8f5e8 0%, #f0f8f0 100%);
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid #c8e6c9;
+            text-align: center;
+        }
+
+        .option-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.2);
+            border-color: #4caf50;
+        }
+
+        .option-icon {
+            font-size: 28px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .option-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #2e7d32;
+            margin-bottom: 5px;
+        }
+
+        .option-desc {
+            font-size: 12px;
+            color: #4caf50;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #495057;
+            font-size: 14px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #8B4513;
+            box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.1);
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            display: inline-block;
+            text-decoration: none;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(139, 69, 19, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+        }
+
+        .calculation-display {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 1px solid #90caf9;
+        }
+
+        .calc-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .calc-row.total {
+            font-weight: bold;
+            font-size: 16px;
+            color: #1976d2;
+            border-top: 1px solid #64b5f6;
+            padding-top: 8px;
+            margin-top: 8px;
+        }
+
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f1f3f4;
+        }
+
+        .transaction-item:last-child {
+            border-bottom: none;
+        }
+
+        .transaction-info h4 {
+            font-size: 14px;
+            margin-bottom: 4px;
+            color: #212529;
+        }
+
+        .transaction-info p {
+            font-size: 12px;
+            color: #6c757d;
+        }
+
+        .transaction-amount {
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .balance-display {
+            background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 20px;
+            border: 2px solid #a5d6a7;
+        }
+
+        .balance-amount {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2e7d32;
+            margin-bottom: 5px;
+        }
+
+        .balance-label {
+            color: #4caf50;
+            font-size: 14px;
+        }
+
+        .export-options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .farmer-search {
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #dee2e6;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            max-height: 150px;
+            overflow-y: auto;
+            z-index: 10;
+        }
+
+        .search-item {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #f1f3f4;
+        }
+
+        .search-item:hover {
+            background: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <div class="device-frame">
+        <div class="screen">
+            <!-- Status Bar -->
+            <div class="status-bar">
+                <span>09:41</span>
+                <span>📶 📶 🔋 100%</span>
+            </div>
+
+            <!-- App Header -->
+            <div class="app-header">
+                <button class="back-button hidden" onclick="goBack()">← </button>
+                <div class="app-title">☕ KopiCatat Pro</div>
+                <div class="app-subtitle">Sistem Pencatatan Biji Kopi Mentah</div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="content">
+                <!-- Dashboard Page -->
+                <div id="dashboard-page" class="page">
+                    <div class="card">
+                        <h3 style="margin-bottom: 20px; color: #8B4513; text-align: center;">🏠 Dashboard Admin</h3>
+                        <div class="dashboard-grid">
+                            <div class="dashboard-card" onclick="showWeighingOptions()">
+                                <span class="dashboard-icon">⚖️</span>
+                                <div class="dashboard-title">Timbang</div>
+                                <div class="dashboard-desc">Pencatatan timbangan kopi</div>
+                            </div>
+                            <div class="dashboard-card" onclick="showBalancePage()">
+                                <span class="dashboard-icon">💰</span>
+                                <div class="dashboard-title">Saldo</div>
+                                <div class="dashboard-desc">Kelola saldo petani</div>
+                            </div>
+                            <div class="dashboard-card" onclick="showExportPage()">
+                                <span class="dashboard-icon">📤</span>
+                                <div class="dashboard-title">Export</div>
+                                <div class="dashboard-desc">Export data laporan</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Weighing Options Page -->
+                <div id="weighing-options-page" class="page hidden">
+                    <div class="card">
+                        <h3 style="margin-bottom: 20px; color: #8B4513; text-align: center;">⚖️ Pilih Jenis Penimbangan</h3>
+                        <div class="weighing-options">
+                            <div class="option-card" onclick="showNewFarmerForm()">
+                                <span class="option-icon">👨‍🌾➕</span>
+                                <div class="option-title">Petani Baru</div>
+                                <div class="option-desc">Registrasi + input penimbangan</div>
+                            </div>
+                            <div class="option-card" onclick="showExistingFarmerForm()">
+                                <span class="option-icon">👨‍🌾✅</span>
+                                <div class="option-title">Petani Lama</div>
+                                <div class="option-desc">Input penimbangan petani terdaftar</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- New Farmer Form -->
+                <div id="new-farmer-page" class="page hidden">
+                    <div class="card">
+                        <h3 style="margin-bottom: 15px; color: #8B4513;">👨‍🌾 Registrasi Petani Baru</h3>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Nama Lengkap</label>
+                            <input type="text" class="form-control" placeholder="Masukkan nama petani">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Nomor Telepon</label>
+                            <input type="tel" class="form-control" placeholder="08xxxxxxxxxx">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Alamat</label>
+                            <textarea class="form-control" rows="2" placeholder="Alamat lengkap"></textarea>
+                        </div>
+
+                        <hr style="margin: 20px 0; border: 1px solid #dee2e6;">
+
+                        <h4 style="margin-bottom: 15px; color: #8B4513;">📏 Data Penimbangan</h4>
+
+                        <div class="form-group">
+                            <label class="form-label">Kategori Kopi</label>
+                            <select class="form-control" id="new-category-select">
+                                <option value="">Pilih kategori...</option>
+                                <option value="arabica">Arabica Premium</option>
+                                <option value="robusta">Robusta Grade A</option>
+                                <option value="liberica">Liberica Spesial</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Harga per Kilo (Rp)</label>
+                            <input type="number" class="form-control" id="new-price-input" placeholder="0" oninput="calculateNewTotal()">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Berat (kg)</label>
+                            <input type="number" class="form-control" id="new-weight-input" placeholder="0.00" step="0.1" oninput="calculateNewTotal()">
+                        </div>
+
+                        <div class="calculation-display">
+                            <div class="calc-row">
+                                <span>Berat:</span>
+                                <span id="new-calc-weight">0 kg</span>
+                            </div>
+                            <div class="calc-row">
+                                <span>Harga per kg:</span>
+                                <span id="new-calc-price">Rp 0</span>
+                            </div>
+                            <div class="calc-row total">
+                                <span>Total:</span>
+                                <span id="new-calc-total">Rp 0</span>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary">💾 Simpan Petani & Transaksi</button>
+                    </div>
+                </div>
+
+                <!-- Existing Farmer Form -->
+                <div id="existing-farmer-page" class="page hidden">
+                    <div class="card">
+                        <h3 style="margin-bottom: 15px; color: #8B4513;">📏 Penimbangan Petani Lama</h3>
+                        
+                        <div class="farmer-search">
+                            <label class="form-label">Pilih Petani</label>
+                            <input type="text" class="form-control" placeholder="Cari nama petani..." oninput="showSearchResults(this.value)">
+                            <div class="search-results hidden" id="search-results">
+                                <div class="search-item" onclick="selectFarmer('Bapak Suharto')">👨‍🌾 Bapak Suharto - Saldo: Rp 250,000</div>
+                                <div class="search-item" onclick="selectFarmer('Ibu Sari')">👩‍🌾 Ibu Sari - Saldo: Rp 150,000</div>
+                                <div class="search-item" onclick="selectFarmer('Pak Joko')">👨‍🌾 Pak Joko - Saldo: Rp 75,000</div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Kategori Kopi</label>
+                            <select class="form-control" id="category-select">
+                                <option value="">Pilih kategori...</option>
+                                <option value="arabica">Arabica Premium</option>
+                                <option value="robusta">Robusta Grade A</option>
+                                <option value="liberica">Liberica Spesial</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Harga per Kilo (Rp)</label>
+                            <input type="number" class="form-control" id="price-input" placeholder="0" oninput="calculateTotal()">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Berat (kg)</label>
+                            <input type="number" class="form-control" id="weight-input" placeholder="0.00" step="0.1" oninput="calculateTotal()">
+                        </div>
+
+                        <div class="calculation-display">
+                            <div class="calc-row">
+                                <span>Berat:</span>
+                                <span id="calc-weight">0 kg</span>
+                            </div>
+                            <div class="calc-row">
+                                <span>Harga per kg:</span>
+                                <span id="calc-price">Rp 0</span>
+                            </div>
+                            <div class="calc-row total">
+                                <span>Total:</span>
+                                <span id="calc-total">Rp 0</span>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary">💾 Simpan Transaksi</button>
+                    </div>
+
+                    <div class="card">
+                        <h4 style="margin-bottom: 15px; color: #8B4513;">📋 Riwayat Hari Ini</h4>
+                        <div class="transaction-item">
+                            <div class="transaction-info">
+                                <h4>Bapak Suharto - Arabica</h4>
+                                <p>15.5 kg • Rp 45,000/kg • 09:30</p>
+                            </div>
+                            <div class="transaction-amount">Rp 697,500</div>
+                        </div>
+                        <div class="transaction-item">
+                            <div class="transaction-info">
+                                <h4>Ibu Sari - Robusta</h4>
+                                <p>8.2 kg • Rp 35,000/kg • 08:15</p>
+                            </div>
+                            <div class="transaction-amount">Rp 287,000</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Balance Page -->
+                <div id="balance-page" class="page hidden">
+                    <div class="balance-display">
+                        <div class="balance-amount">Rp 1,245,000</div>
+                        <div class="balance-label">Saldo Bapak Suharto</div>
+                    </div>
+
+                    <div class="card">
+                        <h4 style="margin-bottom: 15px; color: #28a745;">💸 Penarikan Saldo</h4>
+                        <div class="form-group">
+                            <label class="form-label">Pilih Petani</label>
+                            <select class="form-control">
+                                <option value="">Pilih petani...</option>
+                                <option value="suharto">Bapak Suharto - Rp 1,245,000</option>
+                                <option value="sari">Ibu Sari - Rp 850,000</option>
+                                <option value="joko">Pak Joko - Rp 425,000</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Jumlah Penarikan</label>
+                            <input type="number" class="form-control" placeholder="0">
+                        </div>
+                        <button class="btn btn-success">Proses Penarikan</button>
+                    </div>
+
+                    <div class="card">
+                        <h4 style="margin-bottom: 15px; color: #8B4513;">📊 Riwayat Saldo</h4>
+                        <div class="transaction-item">
+                            <div class="transaction-info">
+                                <h4>Deposit dari Timbangan</h4>
+                                <p>14/06/2025 - 09:30</p>
+                            </div>
+                            <div class="transaction-amount" style="color: #28a745;">+Rp 697,500</div>
+                        </div>
+                        <div class="transaction-item">
+                            <div class="transaction-info">
+                                <h4>Penarikan Tunai</h4>
+                                <p>13/06/2025 - 14:20</p>
+                            </div>
+                            <div class="transaction-amount" style="color: #dc3545;">-Rp 500,000</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Export Page -->
+                <div id="export-page" class="page hidden">
+                    <div class="card">
+                        <h3 style="margin-bottom: 15px; color: #8B4513;">📅 Filter Laporan</h3>
+                        <div class="form-group">
+                            <label class="form-label">Tanggal Mulai</label>
+                            <input type="date" class="form-control" value="2025-06-01">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Tanggal Akhir</label>
+                            <input type="date" class="form-control" value="2025-06-14">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Jenis Laporan</label>
+                            <select class="form-control">
+                                <option value="all">Semua Transaksi</option>
+                                <option value="weighing">Timbangan</option>
+                                <option value="balance">Saldo</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h4 style="margin-bottom: 15px; color: #28a745;">📤 Export Data</h4>
+                        <div class="export-options">
+                            <button class="btn btn-primary">📄 Export Excel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentPage = 'dashboard';
+
+        function showPage(pageId) {
+            // Hide all pages
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => page.classList.add('hidden'));
+
+            // Show selected page
+            document.getElementById(pageId).classList.remove('hidden');
+
+            // Update back button visibility
+            const backButton = document.querySelector('.back-button');
+            if (pageId === 'dashboard-page') {
+                backButton.classList.add('hidden');
+            } else {
+                backButton.classList.remove('hidden');
+            }
+
+            currentPage = pageId;
+        }
+
+        function goBack() {
+            if (currentPage === 'new-farmer-page' || currentPage === 'existing-farmer-page') {
+                showPage('weighing-options-page');
+            } else {
+                showPage('dashboard-page');
+            }
+        }
+
+        function showWeighingOptions() {
+            showPage('weighing-options-page');
+        }
+
+        function showNewFarmerForm() {
+            showPage('new-farmer-page');
+        }
+
+        function showExistingFarmerForm() {
+            showPage('existing-farmer-page');
+        }
+
+        function showBalancePage() {
+            showPage('balance-page');
+        }
+
+        function showExportPage() {
+            showPage('export-page');
+        }
+
+        function showSearchResults(value) {
+            const results = document.getElementById('search-results');
+            if (value.length > 0) {
+                results.classList.remove('hidden');
+            } else {
+                results.classList.add('hidden');
+            }
+        }
+
+        function selectFarmer(name) {
+            const input = document.querySelector('.farmer-search input');
+            input.value = name;
+            document.getElementById('search-results').classList.add('hidden');
+        }
+
+        function calculateTotal() {
+            const weightInput = document.getElementById('weight-input');
+            const priceInput = document.getElementById('price-input');
+            
+            const weight = parseFloat(weightInput.value) || 0;
+            const price = parseFloat(priceInput.value) || 0;
+            const total = weight * price;
+
+            document.getElementById('calc-weight').textContent = weight + ' kg';
+            document.getElementById('calc-price').textContent = 'Rp ' + price.toLocaleString('id-ID');
+            document.getElementById('calc-total').textContent = 'Rp ' + total.toLocaleString('id-ID');
+        }
+
+        function calculateNewTotal() {
+            const weightInput = document.getElementById('new-weight-input');
+            const priceInput = document.getElementById('new-price-input');
+            
+            const weight = parseFloat(weightInput.value) || 0;
+            const price = parseFloat(priceInput.value) || 0;
+            const total = weight * price;
+
+            document.getElementById('new-calc-weight').textContent = weight + ' kg';
+            document.getElementById('new-calc-price').textContent = 'Rp ' + price.toLocaleString('id-ID');
+            document.getElementById('new-calc-total').textContent = 'Rp ' + total.toLocaleString('id-ID');
+        }
+
+        // Add click handlers for buttons
+        document.addEventListener('DOMContentLoaded', function() {
+            const buttons = document.querySelectorAll('.btn');
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    this.style.transform = 'scale(0.98)';
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1)';
+                    }, 150);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
